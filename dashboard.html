@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-   <style>
+  <style>
     body {
       font-family: 'Hind Siliguri', sans-serif;
     }
@@ -19,7 +19,7 @@
 
 <body class="bg-gray-100" x-data="dashboard()">
   <!-- Dashboard Header -->
-  <header class="sticky top-0 bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-md">
+  <header class="sticky top-0 bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-md z-50">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
       <div class="flex items-center">
         <h1 class="text-xl font-bold">গুড়ের দোকান - ড্যাশবোর্ড</h1>
@@ -55,6 +55,13 @@
   
   <!-- Dashboard Content -->
   <main class="container mx-auto px-4 py-8 mb-16">
+    <!-- Loading State -->
+    <div x-show="loading" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
+        <p class="mt-4 text-gray-700">ডেটা লোড হচ্ছে...</p>
+      </div>
+    </div>
     <!-- Orders Management Tab -->
     <div x-show="activeTab === 'orders'" class="space-y-6">
       <div class="md:flex justify-between items-center">
@@ -108,7 +115,7 @@
                   <div class="text-sm text-gray-900" x-text="'৳ ' + order.total"></div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900" x-text="order.date"></div>
+                  <div class="text-sm text-gray-900" x-text="formatDate(order.date)"></div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span :class="{
@@ -121,7 +128,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button @click="openOrderDetails(order)" class="text-amber-600 hover:text-amber-900 mr-3">বিস্তারিত</button>
-                  <select @change="updateOrderStatus(order.id, $event.target.value)" :value="order.status" class="text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                  <select @change="updateOrderStatus(order.$id, $event.target.value)" :value="order.status" class="text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500">
                     <option value="pending">পেন্ডিং</option>
                     <option value="confirmed">কনফার্মড</option>
                     <option value="shipped">শিপড</option>
@@ -249,32 +256,22 @@
           <h3 class="text-xl font-bold text-gray-800 mb-4">পণ্য ব্যবস্থাপনা</h3>
           
           <div class="space-y-4">
-            <div class="border rounded-lg p-4">
-              <div class="flex justify-between items-center mb-2">
-                <h4 class="font-semibold">খেজুরের গুড়</h4>
-                <button class="text-amber-600 hover:text-amber-800">এডিট</button>
+            <template x-for="product in products" x-key="product.$id">
+              <div class="border rounded-lg p-4">
+                <div class="flex justify-between items-center mb-2">
+                  <h4 class="font-semibold" x-text="product.name">খেজুরের গুড়</h4>
+                  <button class="text-amber-600 hover:text-amber-800">এডিট</button>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600">
+                  <span x-text="`মূল্য: ৳ ${product.price}`"></span>
+                  <span>স্ট্যাটাস: <span class="text-green-600">সক্রিয়</span></span>
+                </div>
               </div>
-              <div class="flex justify-between text-sm text-gray-600">
-                <span>মূল্য: ৳ ২০০/কেজি</span>
-                <span>স্ট্যাটাস: <span class="text-green-600">সক্রিয়</span></span>
-              </div>
-            </div>
-            
-            <div class="border rounded-lg p-4">
-              <div class="flex justify-between items-center mb-2">
-                <h4 class="font-semibold">আখের গুড়</h4>
-                <button class="text-amber-600 hover:text-amber-800">এডিট</button>
-              </div>
-              <div class="flex justify-between text-sm text-gray-600">
-                <span>মূল্য: ৳ ১৫০/কেজি</span>
-                <span>স্ট্যাটাস: <span class="text-green-600">সক্রিয়</span></span>
-              </div>
-            </div>
-            
-            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
-              নতুন পণ্য যোগ করুন
-            </button>
+            </template>
           </div>
+          <button class="mt-4 w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+            নতুন পণ্য যোগ করুন
+          </button>
         </div>
         
         <!-- Content Management -->
@@ -283,20 +280,34 @@
           
           <div class="space-y-4">
             <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">মূল টাইটেল</label>
+              <input x-model="contents.title" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন টাইটেল</label>
-              <input type="text" value="প্রাকৃতিক খেজুর ও আখের গুড়" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+              <input x-model="contents.heroTitle" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
             </div>
             
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন ডেসক্রিপশন</label>
-              <textarea class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়। স্বাদের বিশুদ্ধতা নিশ্চিত করুন আপনার পরিবারের জন্য।</textarea>
+              <textarea x-model="contents.heroDescription" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়। স্বাদের বিশুদ্ধতা নিশ্চিত করুন আপনার পরিবারের জন্য।</textarea>
+              
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">কন্টাক্ট নাম্বার</label>
-              <input type="text" value="01947660563" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+              <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন ছবি</label>
+              <input x-model="contents.heroImage" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">আমাদের গল্প</label>
+              <textarea x-model="contents.history" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়। স্বাদের বিশুদ্ধতা নিশ্চিত করুন আপনার পরিবারের জন্য।</textarea>
+              
             </div>
             
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">আমাদের ছবি</label>
+              <input x-model="contents.historyImage" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
             <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
               পরিবর্তনগুলো সেভ করুন
             </button>
@@ -308,7 +319,7 @@
           <h3 class="text-xl font-bold text-gray-800 mb-4">রিভিউ ব্যবস্থাপনা</h3>
           
           <div class="space-y-4">
-            <template x-for="review in reviews" :key="review.id">
+            <template x-for="review in reviews" :key="review.$id">
               <div class="border rounded-lg p-4">
                 <div class="flex justify-between items-center mb-2">
                   <h4 class="font-semibold" x-text="review.name"></h4>
@@ -317,7 +328,7 @@
                     <button class="text-red-600 hover:text-red-800">ডিলিট</button>
                   </div>
                 </div>
-                <div class="text-sm text-gray-600 mb-2" x-text="review.text"></div>
+                <div class="text-sm text-gray-600 mb-2" x-text="review.comment"></div>
                 <div class="flex text-amber-500">
                   <template x-for="i in 5" :key="i">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -337,32 +348,21 @@
         
         <!-- Analytics Settings -->
         <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">সেটিংস</h3>
+          <h3 class="text-xl font-bold text-gray-800 mb-4">ডেলিভারি চার্জ</h3>
           
-          <div class="space-y-4">
-            <div>
-              <label class="flex items-center">
-                <input type="checkbox" class="rounded border-gray-300 text-amber-600 focus:ring-amber-500" checked>
-                <span class="ml-2 text-sm text-gray-700">ল্যান্ডিং পেজ সক্রিয়</span>
-              </label>
-            </div>
-            
-            <div>
-              <label class="flex items-center">
-                <input type="checkbox" class="rounded border-gray-300 text-amber-600 focus:ring-amber-500" checked>
-                <span class="ml-2 text-sm text-gray-700">অর্ডার গ্রহণ সক্রিয়</span>
-              </label>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">ডেলিভারি চার্জ</label>
-              <input type="number" value="100" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
-            </div>
-            
-            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
-              সেটিংস সেভ করুন
-            </button>
+          <div class="space-y-4 mb-3">
+            <template x-for="(value, key) in deliveries">
+              <div>
+                <label class="flex items-center gap-3">
+                  <input x-model="key" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                  <input x-model="value" type="number" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                </label>
+              </div>
+            </template>
           </div>
+          <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+            ডেলিভারি চার্জ সেভ করুন
+          </button>
         </div>
       </div>
     </div>
@@ -633,14 +633,17 @@
       const tablesDB = new TablesDB(client);
       
       Alpine.data('dashboard', () => ({
-        api: 'https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1',
         activeTab: 'orders',
+        contents: {},
+        deliveries: {},
         showOrderModal: false,
         showSuccessModal: false,
+        loading: false,
         successMessage: '',
         selectedOrder: null,
         shippingFee: 100,
         orders: [],
+        products: [],
         newOrder: {
           customer: {
             name: '',
@@ -652,25 +655,7 @@
             { id: 1, name: 'আখের গুড়', price: 150, selected: false, quantity: 1 }
           ]
         },
-        reviews: [
-        {
-          id: 1,
-          name: 'রাহুল আহমেদ',
-          text: 'খেজুরের গুড়ের স্বাদ অসাধারণ! সম্পূর্ণ প্রাকৃতিক এবং কোনো কেমিক্যাল ছাড়া। পরিবারের সবাই খুব পছন্দ করেছে। দ্রুত ডেলিভারির জন্য ধন্যবাদ।',
-          rating: 5
-        },
-        {
-          id: 2,
-          name: 'সুমাইয়া খাতুন',
-          text: 'আখের গুড়টি খুবই বিশুদ্ধ এবং স্বাস্থ্যকর। শিশুদের জন্য নিঃসন্দেহে চিনির চেয়ে ভালো বিকল্প। নিয়মিত অর্ডার দিচ্ছি এবং সেবায় খুব সন্তুষ্ট।',
-          rating: 4
-        },
-        {
-          id: 3,
-          name: 'মোহাম্মদ আলী',
-          text: 'দুই ধরনের গুড়ই চেক করে দেখেছি। মান এবং স্বাদ দুটোই excellent। বিশেষ করে পেয়িং on delivery সিস্টেমটা খুবই সুবিধাজনক। সত্যিই বিশ্বস্ত একটি দোকান।',
-          rating: 5
-        }],
+        reviews: [],
         analytics: {
           totalOrders: 24,
           completedOrders: 18,
@@ -681,12 +666,40 @@
           this.selectedOrder = order;
           this.showOrderModal = true;
         },
-        updateOrderStatus(orderId, newStatus) {
-          const order = this.orders.find(o => o.id === orderId);
-          if (order) {
-            order.status = newStatus;
-            // Here you would typically make an API call to update the status in your backend
-            console.log(`Order ${orderId} status updated to ${newStatus}`);
+        formatDate(dateString) {
+          const date = new Date(dateString);
+          return date.toLocaleDateString('bn-BD', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        },
+        
+        async updateOrderStatus(orderId, newStatus) {
+          try {
+            this.loading = true;
+            await tablesDB.updateRow({
+              databaseId: '68e8c0740016ef6075ed',
+              tableId: 'orders',
+              rowId: orderId,
+              data: {
+                status: newStatus
+              }
+            });
+            
+            // Update local state
+            const order = this.orders.find(o => o.$id === orderId);
+            if (order) {
+              order.status = newStatus;
+            }
+            
+            // Recalculate analytics
+            this.calculateAnalytics();
+          } catch (error) {
+            console.error('Failed to update order status:', error);
+            alert('স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে।');
+          } finally {
+            this.loading = false;
           }
         },
         increaseNewOrderQuantity(productIndex) {
@@ -765,28 +778,78 @@
           };
           return statusMap[status] || status;
         },
-        init() {
-          this.loader();
-          
-          client.subscribe(['databases.68e8c0740016ef6075ed.tables.orders.rows'], response => {
-            alert('You have a new order')
-          });
-        },
-        async loader() {
-          const promise = await tablesDB.listRows({
-            databaseId: "68e8c0740016ef6075ed",
-            tableId: "orders",
-          });
-          this.orders = promise.rows.map(row => {
+        async init() {
+          this.loading = true;
+          const [orders, contents, products, reviews, features, faqs] = await Promise.all([
+            tablesDB.listRows({
+              databaseId: "68e8c0740016ef6075ed",
+              tableId: "orders",
+            }),
+            tablesDB.getRow({
+              databaseId: "68e8c0740016ef6075ed",
+              tableId: "settings",
+              rowId: "context"
+            }),
+            tablesDB.listRows({
+              databaseId: "68e8c0740016ef6075ed",
+              tableId: "products",
+            }),
+            tablesDB.listRows({
+              databaseId: "68e8c0740016ef6075ed",
+              tableId: "reviews",
+            }),
+            tablesDB.listRows({
+              databaseId: "68e8c0740016ef6075ed",
+              tableId: "features",
+            }),
+            tablesDB.listRows({
+              databaseId: "68e8c0740016ef6075ed",
+              tableId: "faqs",
+            })
+          ]);
+          this.loading = false;
+          this.orders = orders.rows.map(row => {
             return {
               ...row,
               items: JSON.parse(row.items),
               customer: JSON.parse(row.customer)
             }
           });
-          this.analytics.totalOrders = promise.total;
+          this.products = products.rows;
+          this.contents = contents;
+          this.reviews = reviews.rows;
+          this.deliveries = JSON.parse(this.contents.deliveris);
+          
+          
+          this.calculateAnalytics()
+          
+          client.subscribe(['databases.68e8c0740016ef6075ed.tables.orders.rows'], response => {
+            if (response.event === 'databases.68e8c0740016ef6075ed.tables.orders.rows.create') {
+              // New order created
+              const newOrder = {
+                ...response.payload,
+                items: JSON.parse(response.payload.items),
+                customer: JSON.parse(response.payload.customer)
+              };
+              this.orders.unshift(newOrder);
+              
+              // Show notification
+              if (this.activeTab !== 'orders') {
+                alert('আপনার একটি নতুন অর্ডার এসেছে!');
+              }
+            }
+          });
+        },
+        calculateAnalytics() {
+          this.analytics.totalOrders = this.orders.length;
           this.analytics.completedOrders = this.orders.filter(o => o.status === 'delivered').length;
-          this.analytics.totalRevenue = this.orders.filter(o => o.status === 'delivered').reduce((prev, next) => prev + next.total, 0);
+          this.analytics.totalRevenue = this.orders
+            .filter(o => o.status === 'delivered')
+            .reduce((total, order) => total + order.total, 0);
+          
+          // Count unique customers
+          const uniqueCustomers = new Set(this.orders.map(order => order.customer.phone));
+          this.analytics.activeCustomers = uniqueCustomers.size;
         },
       }))
     })
