@@ -768,7 +768,7 @@
         init() {
           this.loader();
           
-          client.subscribe(['databases.68e8c0740016ef6075ed.tables.orders'], response => {
+          client.subscribe(['databases.68e8c0740016ef6075ed.tables.orders.rows'], response => {
             alert('You have a new order')
           });
         },
