@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>গুড়ের দোকান - ড্যাশবোর্ড</title>
+  <!-- Tailwind CSS -->
+  <script src="/src/tailwindcss.js"></script>
+  <!-- Alpine.js -->
+  <script defer src="/src/alpine.js"></script>
+  <!-- Google Fonts - Bengali -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100" x-data="dashboard()">
+  <!-- Dashboard Header -->
+  <header class="sticky top-0 bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <h1 class="text-xl font-bold">গুড়ের দোকান - ড্যাশবোর্ড</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-sm">এডমিন</span>
+        <div class="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center">
+          <span class="font-bold">এ</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Dashboard Navigation -->
+  <nav class="hidden md:block bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex space-x-8">
+        <button @click="activeTab = 'orders'" :class="activeTab === 'orders' ? 'border-b-2 border-amber-500 text-amber-600' : 'text-gray-600'" class="py-4 px-2 font-medium">
+          অর্ডার ব্যবস্থাপনা
+        </button>
+        <button @click="activeTab = 'create-order'" :class="activeTab === 'create-order' ? 'border-b-2 border-amber-500 text-amber-600' : 'text-gray-600'" class="py-4 px-2 font-medium">
+          নতুন অর্ডার
+        </button>
+        <button @click="activeTab = 'landing'" :class="activeTab === 'landing' ? 'border-b-2 border-amber-500 text-amber-600' : 'text-gray-600'" class="py-4 px-2 font-medium">
+          ল্যান্ডিং পেজ কন্ট্রোল
+        </button>
+        <button @click="activeTab = 'analytics'" :class="activeTab === 'analytics' ? 'border-b-2 border-amber-500 text-amber-600' : 'text-gray-600'" class="py-4 px-2 font-medium">
+          বিশ্লেষণ
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Dashboard Content -->
+  <main class="container mx-auto px-4 py-8 mb-16">
+    <!-- Orders Management Tab -->
+    <div x-show="activeTab === 'orders'" class="space-y-6">
+      <div class="md:flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2 md:mb-0">অর্ডার ব্যবস্থাপনা</h2>
+        <div class="flex space-x-4">
+          <div class="relative">
+            <input type="text" placeholder="অর্ডার খুঁজুন..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <select class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            <option value="">সব স্ট্যাটাস</option>
+            <option value="pending">পেন্ডিং</option>
+            <option value="confirmed">কনফার্মড</option>
+            <option value="shipped">শিপড</option>
+            <option value="delivered">ডেলিভার্ড</option>
+            <option value="cancelled">ক্যান্সেলড</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Orders Table -->
+      <div class="bg-white rounded-lg shadow overflow-scroll">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">অর্ডার আইডি</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">গ্রাহক</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">পণ্য</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">মোট মূল্য</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">তারিখ</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">স্ট্যাটাস</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <template x-for="(order, index) in orders" :key="index">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900" x-text="'#' + (index + 1)"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900" x-text="order.customer.name"></div>
+                  <div class="text-sm text-gray-500" x-text="order.customer.phone"></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-gray-900">
+                    <template x-for="item in order.items" :key="item.name">
+                      <div x-text="item.name + ' - ' + item.quantity + ' কেজি'"></div>
+                    </template>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900" x-text="'৳ ' + order.total"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900" x-text="order.date"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span :class="{
+                    'bg-yellow-100 text-yellow-800': order.status === 'pending',
+                    'bg-blue-100 text-blue-800': order.status === 'confirmed',
+                    'bg-indigo-100 text-indigo-800': order.status === 'shipped',
+                    'bg-green-100 text-green-800': order.status === 'delivered',
+                    'bg-red-100 text-red-800': order.status === 'cancelled'
+                  }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" x-text="getStatusText(order.status)"></span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button @click="openOrderDetails(order)" class="text-amber-600 hover:text-amber-900 mr-3">বিস্তারিত</button>
+                  <select @change="updateOrderStatus(order.id, $event.target.value)" :value="order.status" class="text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="pending">পেন্ডিং</option>
+                    <option value="confirmed">কনফার্মড</option>
+                    <option value="shipped">শিপড</option>
+                    <option value="delivered">ডেলিভার্ড</option>
+                    <option value="cancelled">ক্যান্সেলড</option>
+                  </select>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Create Order Tab -->
+    <div x-show="activeTab === 'create-order'" class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-800">নতুন অর্ডার তৈরি করুন</h2>
+      
+      <div class="bg-white rounded-lg shadow p-6">
+        <form @submit.prevent="createNewOrder">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Customer Information -->
+            <div>
+              <h3 class="text-lg font-bold text-gray-800 mb-4">গ্রাহকের তথ্য</h3>
+              
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">গ্রাহকের নাম</label>
+                  <input type="text" x-model="newOrder.customer.name" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="গ্রাহকের পুরো নাম" required>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">ফোন নম্বর</label>
+                  <input type="tel" x-model="newOrder.customer.phone" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="ফোন নম্বর" required>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">ঠিকানা</label>
+                  <textarea x-model="newOrder.customer.address" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা" required></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Order Details -->
+            <div>
+              <h3 class="text-lg font-bold text-gray-800 mb-4">অর্ডার বিবরণ</h3>
+              
+              <div class="space-y-4">
+                <!-- Product 1 -->
+                <div class="border rounded-lg p-4">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                      <input type="checkbox" x-model="newOrder.products[0].selected" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+                      <label class="ml-3 font-semibold">খেজুরের গুড় - ৳ ২০০/কেজি</label>
+                    </div>
+                  </div>
+                  
+                  <div x-show="newOrder.products[0].selected" class="mt-3">
+                    <div class="flex items-center">
+                      <label class="mr-4">পরিমাণ (কেজি):</label>
+                      <button type="button" @click="decreaseNewOrderQuantity(0)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                      <span class="mx-3 font-bold" x-text="newOrder.products[0].quantity"></span>
+                      <button type="button" @click="increaseNewOrderQuantity(0)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                      <span class="ml-4 font-semibold" x-text="'মূল্য: ৳ ' + (newOrder.products[0].quantity * 200)"></span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="border rounded-lg p-4">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                      <input type="checkbox" x-model="newOrder.products[1].selected" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+                      <label class="ml-3 font-semibold">আখের গুড় - ৳ ১৫০/কেজি</label>
+                    </div>
+                  </div>
+                  
+                  <div x-show="newOrder.products[1].selected" class="mt-3">
+                    <div class="flex items-center">
+                      <label class="mr-4">পরিমাণ (কেজি):</label>
+                      <button type="button" @click="decreaseNewOrderQuantity(1)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                      <span class="mx-3 font-bold" x-text="newOrder.products[1].quantity"></span>
+                      <button type="button" @click="increaseNewOrderQuantity(1)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                      <span class="ml-4 font-semibold" x-text="'মূল্য: ৳ ' + (newOrder.products[1].quantity * 150)"></span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="border-t pt-4 mt-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <div class="text-md font-bold">সাবটোটাল:</div>
+                    <div class="text-md font-bold" x-text="'৳ ' + newOrderSubtotal"></div>
+                  </div>
+                  <div class="flex justify-between items-center mb-2">
+                    <div class="text-md font-bold">ডেলিভারি চার্জ:</div>
+                    <div class="text-md font-bold" x-text="'৳ ' + shippingFee"></div>
+                  </div>
+                  <div class="flex justify-between items-center border-t pt-2">
+                    <div class="text-lg font-bold">মোট মূল্য:</div>
+                    <div class="text-lg font-bold" x-text="'৳ ' + newOrderTotal"></div>
+                  </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="mt-6">
+                  <button type="submit" class="w-full bg-amber-500 text-white py-3 rounded-lg hover:bg-amber-600 transition font-semibold">
+                    অর্ডার তৈরি করুন
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Landing Page Control Tab -->
+    <div x-show="activeTab === 'landing'" class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-800">ল্যান্ডিং পেজ কন্ট্রোল</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Product Management -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">পণ্য ব্যবস্থাপনা</h3>
+          
+          <div class="space-y-4">
+            <div class="border rounded-lg p-4">
+              <div class="flex justify-between items-center mb-2">
+                <h4 class="font-semibold">খেজুরের গুড়</h4>
+                <button class="text-amber-600 hover:text-amber-800">এডিট</button>
+              </div>
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>মূল্য: ৳ ২০০/কেজি</span>
+                <span>স্ট্যাটাস: <span class="text-green-600">সক্রিয়</span></span>
+              </div>
+            </div>
+            
+            <div class="border rounded-lg p-4">
+              <div class="flex justify-between items-center mb-2">
+                <h4 class="font-semibold">আখের গুড়</h4>
+                <button class="text-amber-600 hover:text-amber-800">এডিট</button>
+              </div>
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>মূল্য: ৳ ১৫০/কেজি</span>
+                <span>স্ট্যাটাস: <span class="text-green-600">সক্রিয়</span></span>
+              </div>
+            </div>
+            
+            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+              নতুন পণ্য যোগ করুন
+            </button>
+          </div>
+        </div>
+        
+        <!-- Content Management -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">কন্টেন্ট ব্যবস্থাপনা</h3>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন টাইটেল</label>
+              <input type="text" value="প্রাকৃতিক খেজুর ও আখের গুড়" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন ডেসক্রিপশন</label>
+              <textarea class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়। স্বাদের বিশুদ্ধতা নিশ্চিত করুন আপনার পরিবারের জন্য।</textarea>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">কন্টাক্ট নাম্বার</label>
+              <input type="text" value="01947660563" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            
+            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+              পরিবর্তনগুলো সেভ করুন
+            </button>
+          </div>
+        </div>
+        
+        <!-- Review Management -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">রিভিউ ব্যবস্থাপনা</h3>
+          
+          <div class="space-y-4">
+            <template x-for="review in reviews" :key="review.id">
+              <div class="border rounded-lg p-4">
+                <div class="flex justify-between items-center mb-2">
+                  <h4 class="font-semibold" x-text="review.name"></h4>
+                  <div class="flex space-x-2">
+                    <button class="text-amber-600 hover:text-amber-800">এডিট</button>
+                    <button class="text-red-600 hover:text-red-800">ডিলিট</button>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-600 mb-2" x-text="review.text"></div>
+                <div class="flex text-amber-500">
+                  <template x-for="i in 5" :key="i">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path x-show="i <= review.rating" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                      <path x-show="i > review.rating" d="M12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z" />
+                    </svg>
+                  </template>
+                </div>
+              </div>
+            </template>
+            
+            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+              নতুন রিভিউ যোগ করুন
+            </button>
+          </div>
+        </div>
+        
+        <!-- Analytics Settings -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">সেটিংস</h3>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" class="rounded border-gray-300 text-amber-600 focus:ring-amber-500" checked>
+                <span class="ml-2 text-sm text-gray-700">ল্যান্ডিং পেজ সক্রিয়</span>
+              </label>
+            </div>
+            
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" class="rounded border-gray-300 text-amber-600 focus:ring-amber-500" checked>
+                <span class="ml-2 text-sm text-gray-700">অর্ডার গ্রহণ সক্রিয়</span>
+              </label>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">ডেলিভারি চার্জ</label>
+              <input type="number" value="100" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            
+            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+              সেটিংস সেভ করুন
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Analytics Tab -->
+    <div x-show="activeTab === 'analytics'" class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-800">বিশ্লেষণ</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Stats Cards -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="rounded-full bg-amber-100 p-3 mr-4">
+              <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-600">মোট অর্ডার</p>
+              <p class="text-2xl font-bold text-gray-900" x-text="analytics.totalOrders"></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="rounded-full bg-green-100 p-3 mr-4">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-600">সম্পূর্ণ অর্ডার</p>
+              <p class="text-2xl font-bold text-gray-900" x-text="analytics.completedOrders"></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="rounded-full bg-blue-100 p-3 mr-4">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-600">মোট আয়</p>
+              <p class="text-2xl font-bold text-gray-900" x-text="'৳ ' + analytics.totalRevenue"></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center">
+            <div class="rounded-full bg-purple-100 p-3 mr-4">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-600">সক্রিয় গ্রাহক</p>
+              <p class="text-2xl font-bold text-gray-900" x-text="analytics.activeCustomers"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-bold text-gray-800 mb-4">অর্ডার স্ট্যাটাস</h3>
+          <div class="h-64 flex items-center justify-center">
+            <!-- Placeholder for chart -->
+            <div class="text-center text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+              <p>অর্ডার স্ট্যাটাস চার্ট</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-bold text-gray-800 mb-4">পণ্য বিক্রয়</h3>
+          <div class="h-64 flex items-center justify-center">
+            <!-- Placeholder for chart -->
+            <div class="text-center text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+              <p>পণ্য বিক্রয় চার্ট</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Order Details Modal -->
+    <div x-show="showOrderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-end md:items-center justify-center z-50 md:p-4" x-transition>
+      <div @click.away="showOrderModal = false" class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800">অর্ডার বিস্তারিত</h3>
+            <button @click="showOrderModal = false" class="text-gray-500 hover:text-gray-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div x-show="selectedOrder" class="space-y-6">
+            <!-- Order Info -->
+            <div>
+              <h4 class="font-semibold text-gray-700 mb-2">অর্ডার তথ্য</h4>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm text-gray-600">অর্ডার আইডি</p>
+                    <p class="font-medium" x-text="'#' + selectedOrder?.id"></p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">তারিখ</p>
+                    <p class="font-medium" x-text="selectedOrder?.date"></p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">স্ট্যাটাস</p>
+                    <span :class="{
+                      'bg-yellow-100 text-yellow-800': selectedOrder?.status === 'pending',
+                      'bg-blue-100 text-blue-800': selectedOrder?.status === 'confirmed',
+                      'bg-indigo-100 text-indigo-800': selectedOrder?.status === 'shipped',
+                      'bg-green-100 text-green-800': selectedOrder?.status === 'delivered',
+                      'bg-red-100 text-red-800': selectedOrder?.status === 'cancelled'
+                    }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" x-text="getStatusText(selectedOrder?.status)"></span>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">মোট মূল্য</p>
+                    <p class="font-medium" x-text="'৳ ' + selectedOrder?.total"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Customer Info -->
+            <div>
+              <h4 class="font-semibold text-gray-700 mb-2">গ্রাহক তথ্য</h4>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm text-gray-600">নাম</p>
+                    <p class="font-medium" x-text="selectedOrder?.customer.name"></p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">ফোন নম্বর</p>
+                    <p class="font-medium" x-text="selectedOrder?.customer.phone"></p>
+                  </div>
+                  <div class="md:col-span-2">
+                    <p class="text-sm text-gray-600">ঠিকানা</p>
+                    <p class="font-medium" x-text="selectedOrder?.customer.address"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Order Items -->
+            <div>
+              <h4 class="font-semibold text-gray-700 mb-2">পণ্য তালিকা</h4>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="space-y-3">
+                  <template x-for="item in selectedOrder?.items" :key="item.name">
+                    <div class="flex justify-between items-center border-b pb-2 last:border-0 last:pb-0">
+                      <div>
+                        <p class="font-medium" x-text="item.name"></p>
+                        <p class="text-sm text-gray-600" x-text="item.quantity + ' কেজি × ৳ ' + item.price"></p>
+                      </div>
+                      <p class="font-medium" x-text="'৳ ' + (item.quantity * item.price)"></p>
+                    </div>
+                  </template>
+                </div>
+                <div class="flex justify-between items-center mt-4 pt-4 border-t">
+                  <p class="font-semibold">মোট</p>
+                  <p class="font-semibold" x-text="'৳ ' + selectedOrder?.total"></p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex justify-end space-x-3 pt-4">
+              <button @click="showOrderModal = false" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                বন্ধ করুন
+              </button>
+              <button class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+                প্রিন্ট করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div x-show="showSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" x-transition>
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2" x-text="successMessage"></h3>
+          <p class="text-gray-600 mb-6">অর্ডারটি সফলভাবে তৈরি করা হয়েছে।</p>
+          <button @click="showSuccessModal = false" class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition">ঠিক আছে</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Bottom Navigation -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+    <div class="flex justify-around items-center">
+      <!-- Orders Button -->
+      <button @click="activeTab = 'orders'" :class="activeTab === 'orders' ? 'text-amber-600' : 'text-gray-500'" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        <span class="text-xs mt-1">অর্ডার</span>
+      </button>
+      
+      <!-- Landing Page Button -->
+      <button @click="activeTab = 'landing'" :class="activeTab === 'landing' ? 'text-amber-600' : 'text-gray-500'" class="flex flex-col items-center p-2">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        </svg>
+        <span class="text-xs mt-1">ল্যান্ডিং</span>
+      </button>
+      
+      <!-- Create order Page Button -->
+      <button @click="activeTab = 'create-order'" :class="activeTab === 'create-order' ? 'text-amber-600' : 'text-gray-500'" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <circle cx="8" cy="21" r="1" />
+          <circle cx="19" cy="21" r="1" />
+          <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+        </svg>
+        <span class="text-xs mt-1">অর্ডার করুন</span>
+      </button>
+      
+      
+      <!-- Analytics Button -->
+      <button @click="activeTab = 'analytics'" :class="activeTab === 'analytics' ? 'text-amber-600' : 'text-gray-500'" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <span class="text-xs mt-1">বিশ্লেষণ</span>
+      </button>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.2.1"></script>
+  
+  <script>
+    document.addEventListener('alpine:init', () => {
+      
+      const { Client, TablesDB, Query, ID } = Appwrite;
+      const config = new Client()
+        .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+        .setProject('gachibari');
+      
+      const tablesDB = new TablesDB(config);
+      
+      Alpine.data('dashboard', () => ({
+        api: 'https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1',
+        activeTab: 'orders',
+        showOrderModal: false,
+        showSuccessModal: false,
+        successMessage: '',
+        selectedOrder: null,
+        shippingFee: 100,
+        orders: [],
+        newOrder: {
+          customer: {
+            name: '',
+            phone: '',
+            address: ''
+          },
+          products: [
+            { id: 0, name: 'খেজুরের গুড়', price: 200, selected: false, quantity: 1 },
+            { id: 1, name: 'আখের গুড়', price: 150, selected: false, quantity: 1 }
+          ]
+        },
+        reviews: [
+        {
+          id: 1,
+          name: 'রাহুল আহমেদ',
+          text: 'খেজুরের গুড়ের স্বাদ অসাধারণ! সম্পূর্ণ প্রাকৃতিক এবং কোনো কেমিক্যাল ছাড়া। পরিবারের সবাই খুব পছন্দ করেছে। দ্রুত ডেলিভারির জন্য ধন্যবাদ।',
+          rating: 5
+        },
+        {
+          id: 2,
+          name: 'সুমাইয়া খাতুন',
+          text: 'আখের গুড়টি খুবই বিশুদ্ধ এবং স্বাস্থ্যকর। শিশুদের জন্য নিঃসন্দেহে চিনির চেয়ে ভালো বিকল্প। নিয়মিত অর্ডার দিচ্ছি এবং সেবায় খুব সন্তুষ্ট।',
+          rating: 4
+        },
+        {
+          id: 3,
+          name: 'মোহাম্মদ আলী',
+          text: 'দুই ধরনের গুড়ই চেক করে দেখেছি। মান এবং স্বাদ দুটোই excellent। বিশেষ করে পেয়িং on delivery সিস্টেমটা খুবই সুবিধাজনক। সত্যিই বিশ্বস্ত একটি দোকান।',
+          rating: 5
+        }],
+        analytics: {
+          totalOrders: 24,
+          completedOrders: 18,
+          totalRevenue: 12500,
+          activeCustomers: 15
+        },
+        openOrderDetails(order) {
+          this.selectedOrder = order;
+          this.showOrderModal = true;
+        },
+        updateOrderStatus(orderId, newStatus) {
+          const order = this.orders.find(o => o.id === orderId);
+          if (order) {
+            order.status = newStatus;
+            // Here you would typically make an API call to update the status in your backend
+            console.log(`Order ${orderId} status updated to ${newStatus}`);
+          }
+        },
+        increaseNewOrderQuantity(productIndex) {
+          this.newOrder.products[productIndex].quantity += 1;
+        },
+        decreaseNewOrderQuantity(productIndex) {
+          if (this.newOrder.products[productIndex].quantity > 1) {
+            this.newOrder.products[productIndex].quantity -= 1;
+          }
+        },
+        createNewOrder() {
+          // Check if at least one product is selected
+          const selectedProducts = this.newOrder.products.filter(p => p.selected);
+          if (selectedProducts.length === 0) {
+            alert('অনুগ্রহ করে কমপক্ষে একটি পণ্য নির্বাচন করুন।');
+            return;
+          }
+          
+          // Create new order object
+          const newOrder = {
+            id: '10' + (this.orders.length + 1),
+            customer: { ...this.newOrder.customer },
+            items: selectedProducts.map(p => ({
+              name: p.name,
+              quantity: p.quantity,
+              price: p.price
+            })),
+            total: this.newOrderTotal,
+            date: new Date().toLocaleDateString('bn-BD'),
+            status: 'pending'
+          };
+          
+          // Add to orders list
+          this.orders.unshift(newOrder);
+          
+          // Show success message
+          this.successMessage = 'অর্ডার সফল হয়েছে!';
+          this.showSuccessModal = true;
+          
+          // Reset form
+          this.resetNewOrderForm();
+          
+          // Switch to orders tab
+          setTimeout(() => {
+            this.activeTab = 'orders';
+          }, 2000);
+        },
+        resetNewOrderForm() {
+          this.newOrder = {
+            customer: {
+              name: '',
+              phone: '',
+              address: ''
+            },
+            products: [
+              { id: 0, name: 'খেজুরের গুড়', price: 200, selected: false, quantity: 1 },
+              { id: 1, name: 'আখের গুড়', price: 150, selected: false, quantity: 1 }
+            ]
+          };
+        },
+        get newOrderSubtotal() {
+          return this.newOrder.products
+            .filter(p => p.selected)
+            .reduce((total, product) => total + (product.price * product.quantity), 0);
+        },
+        get newOrderTotal() {
+          return this.newOrderSubtotal + this.shippingFee;
+        },
+        getStatusText(status) {
+          const statusMap = {
+            'pending': 'পেন্ডিং',
+            'confirmed': 'কনফার্মড',
+            'shipped': 'শিপড',
+            'delivered': 'ডেলিভার্ড',
+            'cancelled': 'ক্যান্সেলড'
+          };
+          return statusMap[status] || status;
+        },
+        init() {
+          this.loader();
+          
+          client.subscribe(['tables.orders'], response => {
+            alert('You have a new order')
+          });
+        },
+        async loader() {
+          const promise = await tablesDB.listRows({
+            databaseId: "68e8c0740016ef6075ed",
+            tableId: "orders",
+          });
+          this.orders = promise.rows.map(row => {
+            return {
+              ...row,
+              items: JSON.parse(row.items),
+              customer: JSON.parse(row.customer)
+            }
+          });
+          this.analytics.totalOrders = promise.total;
+          this.analytics.completedOrders = this.orders.filter(o => o.status === 'delivered').length;
+          this.analytics.totalRevenue = this.orders.filter(o => o.status === 'delivered').reduce((prev, next) => prev + next.total, 0);
+        },
+      }))
+    })
+  </script>
+</body>
+
+</html>
