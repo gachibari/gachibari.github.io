@@ -7,12 +7,21 @@
   <meta name="description" content="প্রাকৃতিক খেজুর ও আখের গুড় - বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়।">
   <meta name="keywords" content="খেজুর গুড়, আখের গুড়, প্রাকৃতিক গুড়, স্বাস্থ্যকর মিষ্টি, বাংলাদেশ গুড়">
   <title>প্রাকৃতিক খেজুর ও আখের গুড় | স্বাদের বিশুদ্ধতা</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   
+  <!-- Preload critical resources -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" as="script">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Load CSS -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
+  
+    <!-- Defer non-critical JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  <style type="text/css" media="all">
+  
+  <!-- Inline critical CSS -->
+  <style>
     body {
       font-family: 'Hind Siliguri', sans-serif;
     }
@@ -32,17 +41,18 @@
     }
     
     .animate-fade-in {
-      animation: anim 1s linear;
+      animation: fadeIn 1s ease-in-out;
     }
     
-    @keyframes anim {
-      from {
-        opacity: 0;
-      }
-      
-      to {
-        opacity: 1;
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Optimize image rendering */
+    img {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
   </style>
 </head>
@@ -51,9 +61,9 @@
   <!-- Navigation -->
   <nav class="bg-gradient-to-r from-amber-500 to-amber-700 text-white sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <span class="text-xl font-bold">গুড়ের দোকান</span>
-      <a class="flex items-center gap-2 bg-transparent border-2 border-white text-white px-4 py-2 rounded-lg font-semibold hover:bg-white hover:text-amber-800 transition" href="tel:+8801947660563">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <span class="text-xl font-bold" x-text="contents?.title">গুড়ের দোকান</span>
+      <a class="flex items-center gap-2 bg-transparent border-2 border-white text-white px-4 py-2 rounded-lg font-semibold hover:bg-white hover:text-amber-800 transition-colors" href="tel:+8801947660563" aria-label="কল করুন">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9l-5.05.9"></path>
           <path d="M9 10a.5.5 0 0 0 1 0v-1a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path>
         </svg>
@@ -66,15 +76,15 @@
   <section id="home" class="py-12 bg-gradient-to-r from-amber-500 to-amber-700 text-white">
     <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
       <div class="md:w-1/2 mb-8 md:mb-0">
-        <h1 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-in">প্রাকৃতিক খেজুর ও আখের গুড়</h1>
-        <p class="text-lg mb-6 animate-fade-in">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়।</p>
+        <h1 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-in" x-text="contents?.heroTitle">প্রাকৃতিক খেজুর ও আখের গুড়</h1>
+        <p class="text-lg mb-6 animate-fade-in" x-text="contents?.heroDescription">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়।</p>
         <div class="flex gap-4">
-          <a href="#products" class="bg-white text-amber-800 px-6 py-2 rounded-lg font-semibold hover:bg-amber-100 transition">পণ্য দেখুন</a>
-          <a href="#order" class="bg-transparent border-2 border-white text-white px-6 py-2 rounded-lg font-semibold hover:bg-white hover:text-amber-800 transition">অর্ডার করুন</a>
+          <a href="#products" class="bg-white text-amber-800 px-6 py-2 rounded-lg font-semibold hover:bg-amber-100 transition-colors">পণ্য দেখুন</a>
+          <a href="#order" class="bg-transparent border-2 border-white text-white px-6 py-2 rounded-lg font-semibold hover:bg-white hover:text-amber-800 transition-colors">অর্ডার করুন</a>
         </div>
       </div>
       <div class="md:w-1/2 flex justify-center">
-        <img loading="lazy" src="/images/1.webp" alt="গুড়" class="rounded-lg shadow-2xl w-full max-w-sm md:h-64 object-cover animate-fade-in">
+        <img loading="lazy" :src="contents?.heroImage" alt="গুড়" class="rounded-lg shadow-2xl w-full max-w-sm md:h-64 object-cover animate-fade-in" width="400" height="256">
       </div>
     </div>
   </section>
@@ -87,7 +97,7 @@
         <template x-for="feature in features" x-key="feature.title">
           <div class="bg-amber-50 p-6 rounded-lg shadow-md text-center">
             <div class="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg class="w-8 h-8 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x-bind:d="feature.icon"></path>
               </svg>
             </div>
@@ -106,13 +116,13 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <template x-for="(product, index) in products" x-key="index">
           <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <img loading="lazy" :src="product.image" :alt="product.name" class="w-full h-48 object-cover">
+            <img loading="lazy" :src="product.image" :alt="product.name" class="w-full h-48 object-cover" width="400" height="192">
             <div class="p-4">
               <h3 class="text-xl font-bold mb-2 text-amber-800" x-text="product.name"></h3>
               <p class="text-gray-700 mb-4" x-text="product.description"></p>
               <div class="flex justify-between items-center">
                 <span class="text-lg font-bold text-amber-700" x-text="`৳ ${product.price}`"></span>
-                <button @click="directOrder(index)" class="bg-gradient-to-r from-amber-500 to-amber-700 text-white px-4 py-2 rounded-lg">এখনই অর্ডার করুন</button>
+                <button @click="directOrder(index)" class="bg-gradient-to-r from-amber-500 to-amber-700 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">এখনই অর্ডার করুন</button>
               </div>
             </div>
           </div>
@@ -137,32 +147,32 @@
                       <h3 class="font-semibold text-lg" x-text="review.name"></h3>
                       <div class="flex text-amber-500">
                         <template x-for="i in review.rating">
-                          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
                           </svg>
                         </template>
                       </div>
                     </div>
                   </div>
-                  <p class="text-gray-700" x-text="review.text"></p>
+                  <p class="text-gray-700" x-text="review.comment"></p>
                 </div>
               </div>
             </template>
           </div>
         </div>
-        <button @click="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button @click="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors" aria-label="পূর্ববর্তী রিভিউ">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-        <button @click="next()" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button @click="next()" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors" aria-label="পরবর্তী রিভিউ">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
         <div class="flex justify-center mt-4 gap-2">
           <template x-for="(review, index) in reviews" :key="index">
-            <button @click="current = index" :class="`w-3 h-3 rounded-full transition ${current === index ? 'bg-amber-500' : 'bg-gray-300'}`"></button>
+            <button @click="current = index" :class="`w-3 h-3 rounded-full transition-colors ${current === index ? 'bg-amber-500' : 'bg-gray-300'}`" :aria-label="`রিভিউ ${index + 1} দেখুন`"></button>
           </template>
         </div>
       </div>
@@ -174,13 +184,11 @@
     <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center">
         <div class="md:w-1/2 mb-8 md:mb-0">
-          <img loading="lazy" src="/images/1.webp" alt="গুড় তৈরি" class="rounded-lg shadow-lg w-full">
+          <img loading="lazy" :src="contents?.historyImage" alt="গুড় তৈরি" class="rounded-lg shadow-lg w-full" width="600" height="400">
         </div>
         <div class="md:w-1/2 md:pl-8">
           <h2 class="text-2xl font-bold mb-4 text-amber-800">আমাদের গল্প</h2>
-          <p class="text-gray-700 mb-4">আমরা বাংলাদেশের ঐতিহ্যবাহী গুড় প্রস্তুতকারক পরিবার। প্রজন্ম ধরে প্রাকৃতিক উপায়ে খেজুর ও আখের গুড় তৈরি করে আসছি।</p>
-          <p class="text-gray-700 mb-4">আমাদের গুড় সম্পূর্ণ প্রাকৃতিক, কোনো রাসায়নিক বা কৃত্রিম উপাদান ছাড়াই তৈরি।</p>
-          <p class="text-gray-700">আমাদের লক্ষ্য গ্রাম বাংলার ঐতিহ্যবাহী স্বাস্থ্যকর মিষ্টান্ন শহুরে জীবনে পৌঁছে দেওয়া।</p>
+          <p x-text="contents?.history" class="text-gray-700 mb-4">আমরা বাংলাদেশের ঐতিহ্যবাহী গুড় প্রস্তুতকারক পরিবার। প্রজন্ম ধরে প্রাকৃতিক উপায়ে খেজুর ও আখের গুড় তৈরি করে আসছি।</p>
         </div>
       </div>
     </div>
@@ -193,9 +201,9 @@
       <div class="max-w-4xl mx-auto">
         <template x-for="faq in faqs" x-key="faq.question">
           <div class="bg-white rounded-lg shadow-md mb-4" x-data="{ open: false }">
-            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-amber-50 transition rounded-lg" @click="open = !open">
+            <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-amber-50 transition-colors rounded-lg" @click="open = !open" :aria-expanded="open">
               <span class="font-semibold text-amber-800" x-text="faq.question"></span>
-              <svg class="w-5 h-5 text-amber-600 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-amber-600 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </button>
@@ -217,16 +225,16 @@
           <div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block mb-2">আপনার নাম</label>
-                <input type="text" x-model="orderForm.name" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার পুরো নাম" required>
+                <label for="name" class="block mb-2">আপনার নাম</label>
+                <input type="text" id="name" x-model="orderForm.name" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার পুরো নাম" required>
               </div>
               <div>
-                <label class="block mb-2">ফোন নম্বর</label>
-                <input type="tel" x-model="orderForm.phone" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার ফোন নম্বর" required>
+                <label for="phone" class="block mb-2">ফোন নম্বর</label>
+                <input type="tel" id="phone" x-model="orderForm.phone" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার ফোন নম্বর" required>
               </div>
               <div class="md:col-span-2">
-                <label class="block mb-2">আপনার জেলা</label>
-                <select x-model="orderForm.district" @change="getDeliveryCharge(orderForm.district)" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" required>
+                <label for="district" class="block mb-2">আপনার জেলা</label>
+                <select id="district" x-model="orderForm.district" @change="getDeliveryCharge(orderForm.district)" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" required>
                   <option value="">জেলা নির্বাচন করুন</option>
                   <template x-for="district in districts" x-key="district">
                     <option :value="district" x-text="district"></option>
@@ -234,12 +242,12 @@
                 </select>
               </div>
               <div class="md:col-span-2">
-                <label class="block mb-2">ঠিকানা</label>
-                <textarea x-model="orderForm.address" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা" required></textarea>
+                <label for="address" class="block mb-2">ঠিকানা</label>
+                <textarea id="address" x-model="orderForm.address" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা" required></textarea>
               </div>
               <div class="md:col-span-2">
-                <label class="block mb-2">আপনার মন্তব্য</label>
-                <textarea x-model="orderForm.comment" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="আপনার মন্তব্য"></textarea>
+                <label for="comment" class="block mb-2">আপনার মন্তব্য</label>
+                <textarea id="comment" x-model="orderForm.comment" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="আপনার মন্তব্য"></textarea>
               </div>
             </div>
             <div class="mt-6">
@@ -248,15 +256,15 @@
                 <div class="bg-amber-600 p-4 rounded-lg mb-4">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <input type="checkbox" x-model="orderForm.products[index].selected" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
-                      <label class="ml-3 font-semibold" x-text="`${product.name} - ৳ ${product.price}`"></label>
+                      <input type="checkbox" :id="`product-${index}`" x-model="orderForm.products[index].selected" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+                      <label :for="`product-${index}`" class="ml-3 font-semibold" x-text="`${product.name} - ৳ ${product.price}`"></label>
                     </div>
                   </div>
                   <div x-show="orderForm.products[index].selected" class="mt-3 flex items-center gap-4">
                     <label>পরিমাণ:</label>
-                    <button type="button" @click="decreaseQuantity(index)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                    <button type="button" @click="decreaseQuantity(index)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-400 transition-colors">-</button>
                     <span class="font-bold" x-text="orderForm.products[index].quantity"></span>
-                    <button type="button" @click="increaseQuantity(index)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                    <button type="button" @click="increaseQuantity(index)" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-400 transition-colors">+</button>
                     <span class="font-semibold" x-text="'মূল্য: ৳ ' + (orderForm.products[index].quantity * product.price)"></span>
                   </div>
                 </div>
@@ -273,7 +281,7 @@
             <template x-for="product in orderForm.products.filter(p => p.selected)">
               <div class="mt-2 flex justify-between items-center">
                 <div class="flex items-center gap-2">
-                  <img loading="lazy" class="w-10 h-10 rounded" :src="product.image" :alt="product.name">
+                  <img loading="lazy" class="w-10 h-10 rounded" :src="product.image" :alt="product.name" width="40" height="40">
                   <span x-text="product.name"></span>
                 </div>
                 <span x-text="'×' + product.quantity"></span>
@@ -296,9 +304,9 @@
               <p>প্রডাক্ট হাতে পেয়ে টাকা পরিশোধ করার সুযোগ।</p>
               <div class="mt-2 bg-amber-50 text-amber-800 p-3 rounded-md">❤️ অগ্রিম পেমেন্ট নেই। প্রোডাক্ট চেক করে টাকা পরিশোধ করুন ❤️</div>
             </div>
-            <div class="mt-6 text-center">
-              <button type="submit" class="flex items-center gap-3 bg-white text-amber-800 px-6 py-2 rounded-lg font-semibold hover:bg-amber-100 transition">
-                <svg x-show="panding" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <div class="mt-6 grid place-items-center">
+              <button type="submit" class="flex items-center gap-3 bg-white text-amber-800 px-6 py-2 rounded-lg font-semibold hover:bg-amber-100 transition-colors" :disabled="panding">
+                <svg x-show="panding" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z">
                     <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite" />
                   </path>
@@ -318,13 +326,13 @@
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
       <div class="text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
           </svg>
         </div>
         <h3 class="text-xl font-bold text-gray-800 mb-2">অর্ডার সফল!</h3>
         <p class="text-gray-600 mb-6">আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে। শীঘ্রই আমাদের প্রতিনিধি যোগাযোগ করবে।</p>
-        <button @click="showSuccessModal = false; resetForm();" class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition">ঠিক আছে</button>
+        <button @click="showSuccessModal = false; resetForm();" class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition-colors">ঠিক আছে</button>
       </div>
     </div>
   </div>
@@ -338,19 +346,19 @@
           <p class="mt-2">প্রাকৃতিক খেজুর ও আখের গুড়</p>
         </div>
         <div class="flex gap-6">
-          <a href="#" class="hover:text-amber-300 transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <a href="#" class="hover:text-amber-300 transition-colors" aria-label="ফেসবুক">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 10v4h3v7h4v-7h3l1-4h-4v-2a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2h-3"></path>
             </svg>
           </a>
-          <a href="https://wa.me/8801947660563" class="hover:text-amber-300 transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <a href="https://wa.me/8801947660563" class="hover:text-amber-300 transition-colors" aria-label="হোয়াটসঅ্যাপ">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9l-5.05.9"></path>
               <path d="M9 10a.5.5 0 0 0 1 0v-1a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path>
             </svg>
           </a>
-          <a href="tel:+8801947660563" class="hover:text-amber-300 transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <a href="tel:+8801947660563" class="hover:text-amber-300 transition-colors" aria-label="কল করুন">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2a16 16 0 0 1-15-15a2 2 0 0 1 2-2"></path>
             </svg>
           </a>
@@ -361,8 +369,9 @@
       </div>
     </div>
   </footer>
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.2.1"></script>
   
+
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.2.1"></script>
   
   <script>
     document.addEventListener('alpine:init', () => {
@@ -383,9 +392,9 @@
         'জামালপুর', 'ময়মনসিংহ', 'নেত্রকোনা', 'শেরপুর'
       ];
       
-      
       Alpine.data('app', () => ({
         api: 'https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1',
+        contents: {},
         current: 0,
         shippingFee: 0,
         reviews: [],
@@ -406,13 +415,38 @@
         },
         async init() {
           try {
-            const res = await fetch(`${this.api}/landing`);
-            const data = await res.json();
-            this.products = data[0].products;
-            this.reviews = data[1].reviews;
-            this.deliveries = data[2];
-            this.features = data[3].features;
-            this.faqs = data[4].faqs;
+            // Load content in parallel
+            const [contents, products, reviews, features, faqs] = await Promise.all([
+              tablesDB.getRow({
+                databaseId: "68e8c0740016ef6075ed",
+                tableId: "settings",
+                rowId: "context"
+              }),
+              tablesDB.listRows({
+                databaseId: "68e8c0740016ef6075ed",
+                tableId: "products",
+              }),
+              tablesDB.listRows({
+                databaseId: "68e8c0740016ef6075ed",
+                tableId: "reviews",
+              }),
+              tablesDB.listRows({
+                databaseId: "68e8c0740016ef6075ed",
+                tableId: "features",
+              }),
+              tablesDB.listRows({
+                databaseId: "68e8c0740016ef6075ed",
+                tableId: "faqs",
+              })
+            ]);
+            
+            this.contents = contents;
+            this.products = products.rows;
+            this.reviews = reviews.rows;
+            this.deliveries = JSON.parse(this.contents.deliveris);
+            this.features = features.rows;
+            this.faqs = faqs.rows;
+            
             this.orderForm.products = this.products.map(product => ({
               ...product,
               selected: false,
@@ -494,7 +528,7 @@
         },
         directOrder(index) {
           this.orderForm.products[index].selected = true;
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
         },
         next() {
           this.current = (this.current + 1) % this.reviews.length;
@@ -514,5 +548,4 @@
     });
   </script>
 </body>
-
 </html>
