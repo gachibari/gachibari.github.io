@@ -101,12 +101,8 @@
                   <div class="text-sm font-medium text-gray-900" x-text="order.customer.name"></div>
                   <div class="text-sm text-gray-500" x-text="order.customer.phone"></div>
                 </td>
-                <td class="px-6 py-4">
-                  <div class="text-sm text-gray-900">
-                    <template x-for="item in order.items" :key="item.name">
-                      <div x-text="item.name + ' - ' + item.quantity + ' কেজি'"></div>
-                    </template>
-                  </div>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900" x-text="order.items.length"></div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900" x-text="'৳ ' + order.total"></div>
