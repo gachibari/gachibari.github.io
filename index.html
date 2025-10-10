@@ -361,8 +361,17 @@
       </div>
     </div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.2.1"></script>
+  
+  
   <script>
     document.addEventListener('alpine:init', () => {
+      const { Client, TablesDB, Query, ID } = Appwrite;
+      const config = new Client()
+        .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+        .setProject('gachibari');
+      
+      const tablesDB = new TablesDB(config);
       const districts = [
         'চুয়াডাঙ্গা', 'ঝিনাইদহ', 'কুষ্টিয়া', 'মেহেরপুর', 'মাগুরা', 'খুলনা', 'বাগেরহাট', 'যশোর', 'নড়াইল', 'সাতক্ষীরা',
         'ঢাকা', 'ফরিদপুর', 'গাজীপুর', 'গোপালগঞ্জ', 'কিশোরগঞ্জ', 'মাদারীপুর', 'মানিকগঞ্জ', 'মুন্সীগঞ্জ', 'নারায়ণগঞ্জ', 'নরসিংদী', 'রাজবাড়ী', 'শরীয়তপুর', 'টাঙ্গাইল',
@@ -433,29 +442,29 @@
           }
           try {
             this.panding = true;
-            await fetch(`${this.api}/orders`, {
-              method: 'POST',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify({
-                id: crypto.randomUUID(),
-                customer: {
+            await tablesDB.createRow({
+              databaseId: '68e8c0740016ef6075ed',
+              tableId: 'orders',
+              rowId: ID.unique(),
+              data: {
+                customer: JSON.stringify({
                   name: this.orderForm.name,
                   phone: this.orderForm.phone,
                   district: this.orderForm.district,
                   address: this.orderForm.address,
                   comment: this.orderForm.comment,
-                },
-                items: selectedProducts.map(p => ({
+                }),
+                items: JSON.stringify(selectedProducts.map(p => ({
                   name: p.name,
                   quantity: p.quantity,
                   price: p.price,
                   image: p.image,
                   total: p.price * p.quantity,
-                })),
+                }))),
                 total: this.totalPrice,
                 date: new Date().toLocaleString(),
                 status: 'pending',
-              }),
+              }
             });
             this.showSuccessModal = true;
           } catch (error) {
