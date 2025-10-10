@@ -626,11 +626,11 @@
     document.addEventListener('alpine:init', () => {
       
       const { Client, TablesDB, Query, ID } = Appwrite;
-      const config = new Client()
+      const client = new Client()
         .setEndpoint('https://nyc.cloud.appwrite.io/v1')
         .setProject('gachibari');
       
-      const tablesDB = new TablesDB(config);
+      const tablesDB = new TablesDB(client);
       
       Alpine.data('dashboard', () => ({
         api: 'https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1',
