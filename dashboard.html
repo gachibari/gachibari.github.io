@@ -308,7 +308,7 @@
               <label class="block text-sm font-medium text-gray-700 mb-1">আমাদের ছবি</label>
               <input x-model="contents.historyImage" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
             </div>
-            <button class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+            <button @click="saveContents()" class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
               পরিবর্তনগুলো সেভ করুন
             </button>
           </div>
@@ -319,7 +319,7 @@
           <h3 class="text-xl font-bold text-gray-800 mb-4">রিভিউ ব্যবস্থাপনা</h3>
           
           <div class="space-y-4">
-            <template x-for="review in reviews" :key="review.$id">
+            <template x-for="(review, index) in reviews" :key="index">
               <div class="border rounded-lg p-4">
                 <div class="flex justify-between items-center mb-2">
                   <h4 class="font-semibold" x-text="review.name"></h4>
@@ -779,46 +779,27 @@
           return statusMap[status] || status;
         },
         async init() {
-          this.loading = true;
-          const [orders, contents, products, reviews, features, faqs] = await Promise.all([
-            tablesDB.listRows({
-              databaseId: "68e8c0740016ef6075ed",
-              tableId: "orders",
-            }),
-            tablesDB.getRow({
-              databaseId: "68e8c0740016ef6075ed",
-              tableId: "settings",
-              rowId: "context"
-            }),
-            tablesDB.listRows({
-              databaseId: "68e8c0740016ef6075ed",
-              tableId: "products",
-            }),
-            tablesDB.listRows({
-              databaseId: "68e8c0740016ef6075ed",
-              tableId: "reviews",
-            }),
-            tablesDB.listRows({
-              databaseId: "68e8c0740016ef6075ed",
-              tableId: "features",
-            }),
-            tablesDB.listRows({
-              databaseId: "68e8c0740016ef6075ed",
-              tableId: "faqs",
-            })
-          ]);
-          this.loading = false;
-          this.orders = orders.rows.map(row => {
-            return {
-              ...row,
-              items: JSON.parse(row.items),
-              customer: JSON.parse(row.customer)
-            }
-          });
-          this.products = products.rows;
-          this.contents = contents;
-          this.reviews = reviews.rows;
-          this.deliveries = JSON.parse(this.contents.deliveris);
+          try {
+            this.loading = true;
+            const [products, reviews, deliveries, features, faqs, contents] = await fetch('https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing').then(ress => ress.json());
+            this.orders = (await tablesDB.listRows({
+              databaseId: '68e8c0740016ef6075ed',
+              tableId: 'orders'
+            })).rows;
+            
+            
+            this.contents = contents.contents;
+            this.products = products.products;
+            this.reviews = reviews.reviews;
+            this.deliveries = deliveries.deliveries;
+            this.features = features.features;
+            this.faqs = faqs.faqs;
+          } catch (error) {
+            console.error('Failed to load data:', error);
+          } finally {
+            this.loading = false;
+          }
+          
           
           
           this.calculateAnalytics()
@@ -851,6 +832,20 @@
           const uniqueCustomers = new Set(this.orders.map(order => order.customer.phone));
           this.analytics.activeCustomers = uniqueCustomers.size;
         },
+        async saveContents() {
+          try {
+            this.loading = true;
+            await fetch('https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing/contents', {
+              method: 'PUT', // or PATCH
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ contents: this.contents })
+            })
+          } catch (error) {
+            console.error('Failed to load data:', error);
+          } finally {
+            this.loading = false;
+          }
+        }
       }))
     })
   </script>
