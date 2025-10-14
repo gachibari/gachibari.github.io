@@ -16,7 +16,7 @@
   <!-- Load CSS -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
   
-    <!-- Defer non-critical JavaScript -->
+  <!-- Defer non-critical JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   
@@ -45,8 +45,13 @@
     }
     
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      
+      to {
+        opacity: 1;
+      }
     }
     
     /* Optimize image rendering */
@@ -58,8 +63,17 @@
 </head>
 
 <body class="bg-amber-50" x-data="app()">
+  
+  <!-- Loading State -->
+  <div x-show="loading" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
+      <p class="mt-4 text-gray-700">ডেটা লোড হচ্ছে...</p>
+    </div>
+  </div>
+  
   <!-- Navigation -->
-  <nav class="bg-gradient-to-r from-amber-500 to-amber-700 text-white sticky top-0 z-50">
+  <nav class="bg-gradient-to-r from-amber-500 to-amber-700 text-white sticky top-0 z-40">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <span class="text-xl font-bold" x-text="contents?.title">গুড়ের দোকান</span>
       <a class="flex items-center gap-2 bg-transparent border-2 border-white text-white px-4 py-2 rounded-lg font-semibold hover:bg-white hover:text-amber-800 transition-colors" href="tel:+8801947660563" aria-label="কল করুন">
@@ -225,15 +239,15 @@
           <div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="name" class="block mb-2">আপনার নাম</label>
+                <label for="name" class="block mb-2">আপনার নাম <span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
                 <input type="text" id="name" x-model="orderForm.name" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার পুরো নাম" required>
               </div>
               <div>
-                <label for="phone" class="block mb-2">ফোন নম্বর</label>
+                <label for="phone" class="block mb-2">ফোন নম্বর<span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
                 <input type="tel" id="phone" x-model="orderForm.phone" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার ফোন নম্বর" required>
               </div>
               <div class="md:col-span-2">
-                <label for="district" class="block mb-2">আপনার জেলা</label>
+                <label for="district" class="block mb-2">আপনার জেলা <span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
                 <select id="district" x-model="orderForm.district" @change="getDeliveryCharge(orderForm.district)" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" required>
                   <option value="">জেলা নির্বাচন করুন</option>
                   <template x-for="district in districts" x-key="district">
@@ -242,11 +256,12 @@
                 </select>
               </div>
               <div class="md:col-span-2">
-                <label for="address" class="block mb-2">ঠিকানা</label>
+                <label for="address" class="block mb-2">
+                  ঠিকানা <span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
                 <textarea id="address" x-model="orderForm.address" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা" required></textarea>
               </div>
               <div class="md:col-span-2">
-                <label for="comment" class="block mb-2">আপনার মন্তব্য</label>
+                <label for="comment" class="block mb-2">আপনার মন্তব্য <span class="ml-2">(অতিরিক্ত)</span></label>
                 <textarea id="comment" x-model="orderForm.comment" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="আপনার মন্তব্য"></textarea>
               </div>
             </div>
@@ -370,7 +385,7 @@
     </div>
   </footer>
   
-
+  
   <script src="https://cdn.jsdelivr.net/npm/appwrite@21.2.1"></script>
   
   <script>
@@ -393,15 +408,15 @@
       ];
       
       Alpine.data('app', () => ({
-        api: 'https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1',
         contents: {},
         current: 0,
         shippingFee: 0,
         reviews: [],
         products: [],
-        deliveries: [],
+        deliveries: {},
         showSuccessModal: false,
         panding: false,
+        loading: false,
         districts,
         features: [],
         faqs: [],
@@ -415,37 +430,17 @@
         },
         async init() {
           try {
+            this.loading = true;
+            
             // Load content in parallel
-            const [contents, products, reviews, features, faqs] = await Promise.all([
-              tablesDB.getRow({
-                databaseId: "68e8c0740016ef6075ed",
-                tableId: "settings",
-                rowId: "context"
-              }),
-              tablesDB.listRows({
-                databaseId: "68e8c0740016ef6075ed",
-                tableId: "products",
-              }),
-              tablesDB.listRows({
-                databaseId: "68e8c0740016ef6075ed",
-                tableId: "reviews",
-              }),
-              tablesDB.listRows({
-                databaseId: "68e8c0740016ef6075ed",
-                tableId: "features",
-              }),
-              tablesDB.listRows({
-                databaseId: "68e8c0740016ef6075ed",
-                tableId: "faqs",
-              })
-            ]);
+            const [products, reviews, deliveries, features, faqs, contents] = await fetch('https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing').then(ress => ress.json());
             
             this.contents = contents;
-            this.products = products.rows;
-            this.reviews = reviews.rows;
-            this.deliveries = JSON.parse(this.contents.deliveris);
-            this.features = features.rows;
-            this.faqs = faqs.rows;
+            this.products = products.products;
+            this.reviews = reviews.reviews;
+            this.deliveries = deliveries;
+            this.features = features.features;
+            this.faqs = faqs.faqs;
             
             this.orderForm.products = this.products.map(product => ({
               ...product,
@@ -454,6 +449,8 @@
             }));
           } catch (error) {
             console.error('Failed to load data:', error);
+          } finally {
+            this.loading = false;
           }
         },
         increaseQuantity(index) {
@@ -464,13 +461,27 @@
             this.orderForm.products[index].quantity -= 1;
           }
         },
+        isValidBDNumber(phoneNumber) {
+          phoneNumber = phoneNumber.replace(/\D/g, '');
+          
+          const bdOperatorCodes = ['013', '014', '015', '016', '017', '018', '019'];
+          
+          if (phoneNumber.length === 11) {
+            const operatorCode = phoneNumber.slice(0, 3);
+            if (bdOperatorCodes.includes(operatorCode)) {
+              return true;
+            }
+          }
+          
+          return false;
+        },
         async submitOrder() {
           const selectedProducts = this.orderForm.products.filter(p => p.selected);
           if (!selectedProducts.length) {
             alert('অনুগ্রহ করে কমপক্ষে একটি পণ্য নির্বাচন করুন।');
             return;
           }
-          if (!this.orderForm.name || !this.orderForm.phone || !this.orderForm.district || !this.orderForm.address) {
+          if (!this.orderForm.name || !this.isValidBDNumber(this.orderForm.phone) || !this.orderForm.district || !this.orderForm.address) {
             alert('অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন।');
             return;
           }
@@ -548,4 +559,5 @@
     });
   </script>
 </body>
+
 </html>
