@@ -153,7 +153,7 @@
         <div class="overflow-hidden rounded-lg">
           <div class="flex transition-transform duration-500 ease-in-out" :style="`transform: translateX(-${current * 100}%)`">
             <template x-for="(review, index) in reviews" :key="index">
-              <div class="min-w-full flex-shrink-0 px-4">
+              <div class="min-w-full flex-shrink-0">
                 <div class="bg-amber-50 p-6 rounded-lg shadow-md mx-auto max-w-sm">
                   <div class="flex items-center mb-4">
                     <div class="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center text-amber-800 font-bold text-lg" x-text="review.name.slice(0,2)"></div>
@@ -174,12 +174,12 @@
             </template>
           </div>
         </div>
-        <button @click="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors" aria-label="পূর্ববর্তী রিভিউ">
+        <button @click="prev()" class="absolute -left-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors" aria-label="পূর্ববর্তী রিভিউ">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-        <button @click="next()" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors" aria-label="পরবর্তী রিভিউ">
+        <button @click="next()" class="absolute -right-2 top-1/2 -translate-y-1/2 p-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors" aria-label="পরবর্তী রিভিউ">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
@@ -189,6 +189,10 @@
             <button @click="current = index" :class="`w-3 h-3 rounded-full transition-colors ${current === index ? 'bg-amber-500' : 'bg-gray-300'}`" :aria-label="`রিভিউ ${index + 1} দেখুন`"></button>
           </template>
         </div>
+        <div class="flex justify-center mt-3">
+          <button class="bg-gradient-to-r from-amber-500 to-amber-700 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">রিভিউ দিন</button>
+        </div>
+        
       </div>
     </div>
   </section>
@@ -337,7 +341,7 @@
   </section>
   
   <!-- Order Success Modal -->
-  <div x-show="showSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" x-transition>
+  <div x-show="showSuccessModal" class="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center z-50 p-4" x-transition>
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
       <div class="text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -386,6 +390,77 @@
   </footer>
   
   
+  <!-- Customer Review Modal -->
+  <div x-show="showReviewModal" class="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-end md:items-center justify-center z-50 md:p-4" x-transition>
+    <div class="bg-white rounded-t-2xl md:rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto" @click.outside="showReviewModal = false">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-amber-800">রিভিউ দিন</h3>
+          <button @click="showReviewModal = false" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <form @submit.prevent="submitReview">
+          <!-- Customer Info -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">আপনার নাম</label>
+            <input type="text" x-model="reviewForm.name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="নাম" required>
+          </div>
+          
+          <!-- Rating -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-3">রেটিং দিন</label>
+            <div class="flex space-x-2">
+              <template x-for="i in 5">
+                <button type="button" @click="reviewForm.rating = i" class="focus:outline-none">
+                  <svg class="w-8 h-8" :class="i <= reviewForm.rating ? 'text-amber-500' : 'text-gray-300'" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                </button>
+              </template>
+            </div>
+          </div>
+          
+          <!-- Review Text -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">আপনার অভিজ্ঞতা শেয়ার করুন</label>
+            <textarea x-model="reviewForm.comment" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="আপনার মূল্যবান মতামত দিন..." required></textarea>
+          </div>
+          
+          <!-- Submit Button -->
+          <button type="submit" class="w-full bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700 transition flex items-center justify-center" x-text="reviewSubmitting ? 'সাবমিট হচ্ছে...' : 'রিভিউ সাবমিট করুন'"></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Review Success Modal -->
+  <div x-show="showReviewSuccess" class="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center z-50 p-4" x-transition>
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-800 mb-2">ধন্যবাদ!</h3>
+      <p class="text-gray-600 mb-6">আপনার রিভিউটি সফলভাবে জমা হয়েছে।</p>
+      <button @click="showReviewSuccess = false" class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition">ঠিক আছে</button>
+    </div>
+  </div>
+  
+  <!-- Add Review Button (Fixed at bottom) -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <button @click="showReviewModal = true" class="bg-amber-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-amber-700 transition flex items-center space-x-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      <span>রিভিউ দিন</span>
+    </button>
+  </div>
+  
   <script src="https://cdn.jsdelivr.net/npm/appwrite@21.2.1"></script>
   
   <script>
@@ -397,8 +472,7 @@
       
       const tablesDB = new TablesDB(config);
       const districts = [
-        'চুয়াডাঙ্গা', 'ঝিনাইদহ', 'কুষ্টিয়া', 'মেহেরপুর', 'মাগুরা', 'খুলনা', 'বাগেরহাট', 'যশোর', 'নড়াইল', 'সাতক্ষীরা',
-        'ঢাকা', 'ফরিদপুর', 'গাজীপুর', 'গোপালগঞ্জ', 'কিশোরগঞ্জ', 'মাদারীপুর', 'মানিকগঞ্জ', 'মুন্সীগঞ্জ', 'নারায়ণগঞ্জ', 'নরসিংদী', 'রাজবাড়ী', 'শরীয়তপুর', 'টাঙ্গাইল',
+        'ঢাকা', 'ফরিদপুর', 'গাজীপুর', 'গোপালগঞ্জ', 'কিশোরগঞ্জ', 'মাদারীপুর', 'মানিকগঞ্জ', 'মুন্সীগঞ্জ', 'নারায়ণগঞ্জ', 'নরসিংদী', 'রাজবাড়ী', 'শরীয়তপুর', 'টাঙ্গাইল', 'চুয়াডাঙ্গা', 'ঝিনাইদহ', 'কুষ্টিয়া', 'মেহেরপুর', 'মাগুরা', 'খুলনা', 'বাগেরহাট', 'যশোর', 'নড়াইল', 'সাতক্ষীরা',
         'বান্দরবান', 'ব্রাহ্মণবাড়িয়া', 'চাঁদপুর', 'চট্টগ্রাম', 'কক্সবাজার', 'কুমিল্লা', 'ফেনী', 'খাগড়াছড়ি', 'লক্ষ্মীপুর', 'নোয়াখালী', 'রাঙ্গামাটি',
         'বগুড়া', 'জয়পুরহাট', 'নওগাঁ', 'নাটোর', 'চাঁপাইনবাবগঞ্জ', 'পাবনা', 'রাজশাহী', 'সিরাজগঞ্জ',
         'বরগুনা', 'বরিশাল', 'ভোলা', 'ঝালকাঠি', 'পটুয়াখালী', 'পিরোজপুর',
@@ -415,11 +489,20 @@
         products: [],
         deliveries: {},
         showSuccessModal: false,
+        showReviewModal: false,
+        showReviewSuccess: false,
+        reviewSubmitting: false,
         panding: false,
         loading: false,
         districts,
         features: [],
         faqs: [],
+        
+        reviewForm: {
+          name: '',
+          rating: 5,
+          comment: ''
+        },
         orderForm: {
           name: '',
           phone: '',
@@ -428,6 +511,39 @@
           comment: '',
           products: [],
         },
+        async submitReview() {
+          try {
+            this.reviewSubmitting = true;
+            
+            let ress = await fetch('https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing/reviews', {
+              method: 'PUT',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                reviews: [...this.reviews, {
+                  id: crypto.randomUUID(),
+                  name: this.reviewForm.name,
+                  rating: this.reviewForm.rating,
+                  comment: this.reviewForm.comment,
+                }]
+              })
+            });
+            if (ress.ok) {
+              this.reviewSubmitting = false;
+              this.showReviewModal = false;
+              this.showReviewSuccess = true;
+            }
+          } catch (error) {
+            console.error('Failed to load data:', error);
+          } finally {
+            this.reviewSubmitting = false;
+            this.showReviewModal = false;
+            this.reviewForm = {
+              name: '',
+              rating: 5,
+              comment: ''
+            };
+          }
+        },
         async init() {
           try {
             this.loading = true;
@@ -435,10 +551,10 @@
             // Load content in parallel
             const [products, reviews, deliveries, features, faqs, contents] = await fetch('https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing').then(ress => ress.json());
             
-            this.contents = contents;
+            this.contents = contents.contents;
             this.products = products.products;
             this.reviews = reviews.reviews;
-            this.deliveries = deliveries;
+            this.deliveries = deliveries.deliveries;
             this.features = features.features;
             this.faqs = faqs.faqs;
             
