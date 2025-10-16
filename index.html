@@ -68,7 +68,6 @@
   <div x-show="loading" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50">
     <div class="text-center">
       <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
-      <p class="mt-4 text-gray-700">ডেটা লোড হচ্ছে...</p>
     </div>
   </div>
   
@@ -190,7 +189,7 @@
           </template>
         </div>
         <div class="flex justify-center mt-3">
-          <button class="bg-gradient-to-r from-amber-500 to-amber-700 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">রিভিউ দিন</button>
+          <button @click="showReviewModal = true" class="bg-gradient-to-r from-amber-500 to-amber-700 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">রিভিউ দিন</button>
         </div>
         
       </div>
