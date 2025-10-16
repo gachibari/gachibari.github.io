@@ -242,15 +242,15 @@
           <div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="name" class="block mb-2">আপনার নাম <span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
+                <label for="name" class="block mb-2">আপনার নাম <span class="ml-2 text-sm">(অবশ্যই পূরণীয়)</span></label>
                 <input type="text" id="name" x-model="orderForm.name" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার পুরো নাম" required>
               </div>
               <div>
-                <label for="phone" class="block mb-2">ফোন নম্বর<span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
-                <input type="tel" id="phone" x-model="orderForm.phone" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="আপনার ফোন নম্বর" required>
+                <label for="phone" class="block mb-2">ফোন নম্বর<span class="ml-2 text-sm">(অবশ্যই পূরণীয়)</span></label>
+                <input type="tel" id="phone" x-model="orderForm.phone" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" placeholder="01500000000" required>
               </div>
               <div class="md:col-span-2">
-                <label for="district" class="block mb-2">আপনার জেলা <span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
+                <label for="district" class="block mb-2">আপনার জেলা <span class="ml-2 text-sm">(অবশ্যই পূরণীয়)</span></label>
                 <select id="district" x-model="orderForm.district" @change="getDeliveryCharge(orderForm.district)" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" required>
                   <option value="">জেলা নির্বাচন করুন</option>
                   <template x-for="district in districts" x-key="district">
@@ -260,11 +260,11 @@
               </div>
               <div class="md:col-span-2">
                 <label for="address" class="block mb-2">
-                  ঠিকানা <span class="ml-2">(অবশ্যই পূরণীয়)</span></label>
+                  ঠিকানা <span class="ml-2 text-sm">(অবশ্যই পূরণীয়)</span></label>
                 <textarea id="address" x-model="orderForm.address" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা" required></textarea>
               </div>
               <div class="md:col-span-2">
-                <label for="comment" class="block mb-2">আপনার মন্তব্য <span class="ml-2">(অতিরিক্ত)</span></label>
+                <label for="comment" class="block mb-2">আপনার মন্তব্য <span class="ml-2 text-sm">(অতিরিক্ত)</span></label>
                 <textarea id="comment" x-model="orderForm.comment" class="w-full px-4 py-2 rounded-lg bg-amber-600 border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-white" rows="3" placeholder="আপনার মন্তব্য"></textarea>
               </div>
             </div>
