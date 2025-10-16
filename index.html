@@ -151,7 +151,7 @@
               <div class="flex justify-between items-center">
                 <div>
                   <span class="text-lg font-bold text-amber-700" x-text="`৳ ${product.price} /=`"></span>
-                  <p>(নিট ওজন- ২.৫ কেজি)</p>
+                  <p>(নিট ওজন- <span x-text="product.netWeight"></span> কেজি)</p>
                 </div>
                 <button @click="directOrder(index)" class="bg-gradient-to-r from-amber-500 to-amber-700 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">এখনই অর্ডার করুন</button>
               </div>
