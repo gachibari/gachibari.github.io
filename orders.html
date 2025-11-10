@@ -428,20 +428,21 @@
             
             // Set up real-time subscription
             client.subscribe(['databases.68e8c0740016ef6075ed.tables.orders.rows'], response => {
-              if (response.event === 'databases.68e8c0740016ef6075ed.tables.orders.rows.create') {
+              
+              if (response) {
                 try {
-                  // New order created
+                  
                   const newOrder = {
                     ...response.payload,
-                    items: typeof response.payload.items === 'string' ? JSON.parse(response.payload.items) : response.payload.items,
-                    customer: typeof response.payload.customer === 'string' ? JSON.parse(response.payload.customer) : response.payload.customer
+                    items: typeof response.payload.items === 'string' ?
+                      JSON.parse(response.payload.items) : response.payload.items,
+                    customer: typeof response.payload.customer === 'string' ?
+                      JSON.parse(response.payload.customer) : response.payload.customer
                   };
-                  this.orders.unshift(newOrder);
                   
-                  // Show notification
-                  if (this.activeTab !== 'orders') {
-                    alert('আপনার একটি নতুন অর্ডার এসেছে!');
-                  }
+                  
+                  this.orders.unshift(newOrder);
+                  alert('You have a new Order');
                 } catch (error) {
                   console.error('Error parsing new order:', error);
                 }
