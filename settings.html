@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>গুড়ের দোকান - ড্যাশবোর্ড</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+    }
+    
+    .field-content {
+      field-sizing: content;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100" x-data="dashboard()">
+  <!-- Dashboard Header -->
+  <header class="sticky top-0 bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-md z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <h1 class="text-xl font-bold">গুড়ের দোকান - ড্যাশবোর্ড</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-sm">এডমিন</span>
+        <div class="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center">
+          <span class="font-bold">এ</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  
+  <!-- Dashboard Content -->
+  <main class="container mx-auto px-4 py-8 mb-16">
+    <!-- Loading State -->
+    <div x-show="loading" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
+        <p class="mt-4 text-gray-700">ডেটা লোড হচ্ছে...</p>
+      </div>
+    </div>
+    
+    <!-- Landing Page Control Tab -->
+    <div class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-800">ল্যান্ডিং পেজ কন্ট্রোল</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Content Management -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">কন্টেন্ট ব্যবস্থাপনা</h3>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">মূল টাইটেল</label>
+              <input x-model="contents.title" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন টাইটেল</label>
+              <input x-model="contents.heroTitle" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন ডেসক্রিপশন</label>
+              <textarea x-model="contents.heroDescription" class="field-content w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়। স্বাদের বিশুদ্ধতা নিশ্চিত করুন আপনার পরিবারের জন্য।</textarea>
+              
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">হিরো সেকশন ছবি</label>
+              <input x-model="contents.heroImage" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">আমাদের গল্প</label>
+              <textarea x-model="contents.history" class="field-content w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent" rows="3">বাংলাদেশের ঐতিহ্যবাহী পদ্ধতিতে তৈরি বিশুদ্ধ ও স্বাস্থ্যকর গুড়। স্বাদের বিশুদ্ধতা নিশ্চিত করুন আপনার পরিবারের জন্য।</textarea>
+              
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">আমাদের ছবি</label>
+              <input x-model="contents.historyImage" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            </div>
+            <button @click="saveContents('contents')" class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+              পরিবর্তনগুলো সেভ করুন
+            </button>
+          </div>
+        </div>
+        
+        
+        <!-- Analytics Settings -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">ডেলিভারি চার্জ</h3>
+          
+          <div class="space-y-4 mb-3">
+            <template x-for="(value, key) in deliveries">
+              <div>
+                <label class="flex items-center gap-3">
+                  <input x-model="key" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                  <input x-model="value" type="number" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                </label>
+              </div>
+            </template>
+          </div>
+          <button @click="saveContents('deliveries')" class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+            ডেলিভারি চার্জ সেভ করুন
+          </button>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">সচরাচর জিজ্ঞাসিত প্রশ্ন</h3>
+          
+          <div class="space-y-4 mb-3">
+            <template x-for="faq in faqs">
+              <div class="space-y-1.5">
+                <label>প্রশ্ন:</label>
+                
+                <input x-model="faq.question" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                <label>উত্তর:</label>
+                <textarea x-model="faq.answer" class="field-content w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+              </div>
+            </template>
+          </div>
+          <button @click="saveContents('faqs')" class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+            প্রশ্ন সেভ করুন
+          </button>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">বৈশিষ্ট্য</h3>
+          
+          <div class="space-y-4 mb-3">
+            <template x-for="feature in features">
+              <div class="space-y-1.5">
+                <label>শিরোনাম</label>
+                
+                <input x-model="feature.title" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                <label>বর্ণনা</label>
+                <textarea x-model="feature.description" class="field-content w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+                <label>আইকন</label>
+                
+                <input x-model="feature.icon" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+              </div>
+            </template>
+          </div>
+          <button @click="saveContents('features')" class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+            বৈশিষ্ট্য সেভ করুন
+          </button>
+        </div>
+      </div>
+    </div>
+    
+  </main>
+  
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+    <div class="flex justify-around items-center">
+      <!-- Dashboard Link -->
+      <a href="/dashboard" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        <span class="text-xs mt-1">ড্যাশবোর্ড</span>
+      </a>
+      
+      <!-- Orders Link -->
+      <a href="/orders" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        <span class="text-xs mt-1">অর্ডার</span>
+      </a>
+      
+      <!-- Products Link -->
+      <a href="/products" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+        </svg>
+        <span class="text-xs mt-1">প্রোডাক্ট</span>
+      </a>
+      
+      <!-- Reviews Link -->
+      <a href="/reviews" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+        </svg>
+        <span class="text-xs mt-1">রিভিউ</span>
+      </a>
+      
+      <!-- Settings Link -->
+      <a href="/settings" class="flex flex-col items-center p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span class="text-xs mt-1">সেটিংস</span>
+      </a>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('alpine:init', () => {
+      
+      Alpine.data('dashboard', () => ({
+        activeTab: 'orders',
+        contents: {},
+        deliveries: {},
+        features: [],
+        faqs: [],
+        loading: false,
+        async init() {
+          try {
+            this.loading = true;
+            const [products, reviews, deliveries, features, faqs, contents] = await fetch('https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing').then(ress => ress.json());
+            
+            
+            this.contents = contents.contents;
+            this.deliveries = deliveries.deliveries;
+            this.features = features.features;
+            this.faqs = faqs.faqs;
+          } catch (error) {
+            console.error('Failed to load data:', error);
+          } finally {
+            this.loading = false;
+          }
+          
+        },
+        async saveContents(path) {
+          const options = {
+            contents: this.contents,
+            deliveries: this.deliveries,
+            features: this.features,
+            faqs: this.faqs,
+          }
+          try {
+            this.loading = true;
+            await fetch(`https://68e84d0af2707e6128ca6a30.mockapi.io/api/v1/landing/${path}`, {
+              method: 'PUT', // or PATCH
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                [path]: options[path]
+              })
+            })
+          } catch (error) {
+            console.error('Failed to load data:', error);
+          } finally {
+            this.loading = false;
+          }
+        }
+      }))
+    })
+  </script>
+</body>
+
+</html>
